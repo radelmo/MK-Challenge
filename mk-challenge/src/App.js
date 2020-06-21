@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { withStyles } from '@material-ui/core/styles';
-import { Card, TextField, Button } from '@material-ui/core';
+import { TextField, Button } from '@material-ui/core';
 
 const useStyles = (theme) => ({
   root: {
@@ -51,11 +51,23 @@ class App extends React.Component {
     });
     
     if (valid) {
+      fetch('https://umjucz9qa5.execute-api.us-west-2.amazonaws.com/dev/sendEmail/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.state.name,
+          email: this.state.email,
+          message: this.state.message
+        })
+      });
+
       console.log('Name: ' + this.state.name);
       console.log('Email: ' + this.state.email);
       console.log('Message: ' + this.state.message);
-    }
-    
+}
+
     event.preventDefault();
   }
 
