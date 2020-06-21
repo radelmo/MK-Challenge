@@ -13,15 +13,15 @@ const useStyles = (theme) => ({
   },
 });
 
+//Alert component for input confirmation message
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
-
+    
     this.state = {
       name: '',
       email: '',
@@ -30,19 +30,14 @@ class App extends React.Component {
       nameHelperText: "",
       emailHelperText: "",
       messageHelperText: "",
-      open: false
+      
+      confirmationBarOpen: false
     }
-
-    
-
   };
-
 
   handleChange = (event) => {
     const name = event.target.name;
-    this.setState({
-      [name]: event.target.value
-    });
+    this.setState({[name]: event.target.value});
   }
 
   handleSubmit = (event) => {
@@ -58,9 +53,10 @@ class App extends React.Component {
       emailHelperText: emailValid ? '' : "Enter a valid email address", 
       messageHelperText: messageValid ? '' : 'Enter a message'
     });
-    
+
+    //User has valid form input
     if (valid) {
-      this.setState({open: true});
+      this.setState({ confirmationBarOpen: true });
       fetch('https://umjucz9qa5.execute-api.us-west-2.amazonaws.com/dev/sendEmail/send', {
         method: 'POST',
         headers: {
@@ -71,79 +67,74 @@ class App extends React.Component {
           email: this.state.email,
           message: this.state.message
         })
-      });
-
+      })
       console.log('Name: ' + this.state.name);
       console.log('Email: ' + this.state.email);
       console.log('Message: ' + this.state.message);
-}
-
+    }
     event.preventDefault();
   }
 
-
-  
-  handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({open: false});
+  handleConfirmationBarClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    this.setState({confirmationBarOpen: false});
   };
 
 
   render() {
-
     const { classes } = this.props;
-
     return (
       <div className="App">
 
-        <form className={classes.root} autoComplete="off" onSubmit={this.handleSubmit} onChange={this.handleChange} variant="outlined">
-          
+        <form className={classes.root}
+          variant="outlined"
+          autoComplete="off"
+          onSubmit={this.handleSubmit}
+          onChange={this.handleChange}
+        >
+
           <TextField
             id="name"
-            name="name" label="Name"
+            name="name"
+            label="Name"
             type="name"
-            autoComplete="name" 
+            autoComplete="name"
             error={this.state.nameHelperText !== ""}
             helperText={this.state.nameHelperText}
           />
-          <TextField 
-          id="email" 
-          name="email" 
-          label="Email" 
-          autoComplete="email"
-          error={this.state.emailHelperText !== ""}
-          helperText={this.state.emailHelperText} 
-          /> <br/>
 
-          <TextField 
-          id="message" 
-          name="message" 
-          label="Message" 
-          type="text" 
-          variant="outlined" 
-          placeholder="Enter your message" 
-          multiline style={{ width: "470px" }}
-          error={this.state.messageHelperText !== ""}
-          helperText={this.state.messageHelperText} 
-          /> <br/>
-          
+          <TextField
+            id="email"
+            name="email"
+            label="Email"
+            autoComplete="email"
+            error={this.state.emailHelperText !== ""}
+            helperText={this.state.emailHelperText}
+          /> <br />
+
+          <TextField
+            id="message"
+            name="message"
+            label="Message"
+            type="text"
+            variant="outlined"
+            placeholder="Enter your message"
+            multiline style={{ width: "470px" }}
+            error={this.state.messageHelperText !== ""}
+            helperText={this.state.messageHelperText}
+          /> <br />
+
           <Button variant="contained" color="primary" type="submit" onClick={this.handleClick}> Submit </Button>
 
-
-          <Snackbar id="success" open={this.state.open} autoHideDuration={6000} onClose={this.handleClose}>
-            <Alert onClose={this.handleClose} severity="success">
+          <Snackbar id="success" open={this.state.confirmationBarOpen} autoHideDuration={6000} onClose={this.handleConfirmationBarClose}>
+            <Alert onClose={this.handleConfirmationBarClose} severity="success">
               You've successfully sent an email to {this.state.email}
             </Alert>
           </Snackbar>
-
         </form>
       </div>
     );
   }
-
 }
 
 export default withStyles(useStyles)(App);
