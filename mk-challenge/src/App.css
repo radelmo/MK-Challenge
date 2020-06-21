@@ -24,5 +24,11 @@ form{
 
 
 #message{
-  width: 1000px;
+  width: 60%;
+}
+
+#success{
+  width: 50%;
+  position: relative;
+  bottom: 10%;
 }

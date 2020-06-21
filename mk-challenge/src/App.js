@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
 import { withStyles } from '@material-ui/core/styles';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Snackbar } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const useStyles = (theme) => ({
   root: {
@@ -12,10 +13,15 @@ const useStyles = (theme) => ({
   },
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class App extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       name: '',
       email: '',
@@ -23,8 +29,11 @@ class App extends React.Component {
       
       nameHelperText: "",
       emailHelperText: "",
-      messageHelperText: ""
+      messageHelperText: "",
+      open: false
     }
+
+    
 
   };
 
@@ -51,6 +60,7 @@ class App extends React.Component {
     });
     
     if (valid) {
+      this.setState({open: true});
       fetch('https://umjucz9qa5.execute-api.us-west-2.amazonaws.com/dev/sendEmail/send', {
         method: 'POST',
         headers: {
@@ -70,6 +80,16 @@ class App extends React.Component {
 
     event.preventDefault();
   }
+
+
+  
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({open: false});
+  };
 
 
   render() {
@@ -110,7 +130,15 @@ class App extends React.Component {
           helperText={this.state.messageHelperText} 
           /> <br/>
           
-          <Button variant="contained" color="primary" type="submit"> Submit </Button>
+          <Button variant="contained" color="primary" type="submit" onClick={this.handleClick}> Submit </Button>
+
+
+          <Snackbar id="success" open={this.state.open} autoHideDuration={6000} onClose={this.handleClose}>
+            <Alert onClose={this.handleClose} severity="success">
+              You've successfully sent an email to {this.state.email}
+            </Alert>
+          </Snackbar>
+
         </form>
       </div>
     );
